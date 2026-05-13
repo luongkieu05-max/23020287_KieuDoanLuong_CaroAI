@@ -16,9 +16,8 @@ Caro AI using Minimax and Alpha-Beta Pruning
 | `source_code/game_rules.py` | Quy tắc trò chơi, kiểm tra thắng/thua/hòa |
 | `source_code/ui_console.py` | Giao diện nhập/xuất bằng console |
 | `requirements.txt` | Ghi các thư viện cần cài, ví dụ pygame nếu có giao diện pygame |
-## Cách chạy chương trình
 
-
+## Cấu trúc thư mục
 ```text
 23020287_KieuDoanLuong_CaroAI/
 │
@@ -33,6 +32,7 @@ Caro AI using Minimax and Alpha-Beta Pruning
 └── .gitignore
 ```
 
+## Cách chạy chương trình
 ```bash
 python source_code/main.py
 
