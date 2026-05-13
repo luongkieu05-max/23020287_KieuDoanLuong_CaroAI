@@ -36,4 +36,3 @@ Caro AI using Minimax and Alpha-Beta Pruning
 ```bash
 python source_code/main.py
 
-## Cấu trúc thư mục
