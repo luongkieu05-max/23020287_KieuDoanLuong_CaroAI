@@ -30,6 +30,7 @@ Caro AI using Minimax and Alpha-Beta Pruning
 ├── README.md
 ├── requirements.txt
 └── .gitignore
+└── report.pdf
 ```
 
 ## Cách chạy chương trình
