@@ -18,10 +18,6 @@ Caro AI using Minimax and Alpha-Beta Pruning
 | `requirements.txt` | Ghi các thư viện cần cài, ví dụ pygame nếu có giao diện pygame |
 ## Cách chạy chương trình
 
-```bash
-python source_code/main.py
-
-## Cấu trúc thư mục
 
 ```text
 23020287_KieuDoanLuong_CaroAI/
@@ -35,3 +31,9 @@ python source_code/main.py
 ├── README.md
 ├── requirements.txt
 └── .gitignore
+```
+
+```bash
+python source_code/main.py
+
+## Cấu trúc thư mục
