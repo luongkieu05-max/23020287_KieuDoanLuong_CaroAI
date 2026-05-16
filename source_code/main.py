@@ -11,10 +11,18 @@
 
 from board import create_board, print_board, make_move, is_valid_move, PLAYER, AI
 from game_rules import get_game_result
-from ui_console import get_player_move
+from ui_console import (
+    show_welcome,
+    get_player_move,
+    show_invalid_move,
+    show_ai_move,
+    show_turn_player,
+    show_turn_ai,
+    show_result
+)
 
 
-def get_ai_move(board):  # sau này sẽ thay thành Minimax hoặc anpha - beta 
+def get_ai_move(board):
     """
     Hàm chọn nước đi cho máy.
 
@@ -28,30 +36,10 @@ def get_ai_move(board):  # sau này sẽ thay thành Minimax hoặc anpha - beta
     """
     for row in range(len(board)):
         for col in range(len(board[row])):
-
             if board[row][col] == ".":
                 return row, col
 
     return None, None
-
-
-def show_result(result):
-    """
-    Hiển thị kết quả trò chơi ra console.
-
-    Tham số result có thể là:
-    - PLAYER_WIN
-    - AI_WIN
-    - DRAW
-    """
-    if result == "PLAYER_WIN":
-        print("Nguoi choi thang!")
-
-    elif result == "AI_WIN":
-        print("May thang!")
-
-    elif result == "DRAW":
-        print("Hoa!")
 
 
 def main():
@@ -67,6 +55,8 @@ def main():
     6. Lặp lại cho đến khi thắng, thua hoặc hòa
     """
 
+    show_welcome()
+
     # Tạo bàn cờ ban đầu
     board = create_board()
 
@@ -77,12 +67,12 @@ def main():
         # ===============================
         # Lượt người chơi
         # ===============================
-        print("Luot nguoi choi X")
+        show_turn_player()
         row, col = get_player_move()
 
         # Kiểm tra nước đi của người chơi
         if not is_valid_move(board, row, col):
-            print("Nuoc di khong hop le. Vui long nhap lai.")
+            show_invalid_move()
             continue
 
         # Đánh quân X vào bàn cờ
@@ -98,13 +88,13 @@ def main():
         # ===============================
         # Lượt máy
         # ===============================
-        print("Luot may O")
+        show_turn_ai()
         ai_row, ai_col = get_ai_move(board)
 
         # Nếu còn ô trống thì máy đánh
         if ai_row is not None and ai_col is not None:
             make_move(board, ai_row, ai_col, AI)
-            print("May danh vao:", ai_row, ai_col)
+            show_ai_move(ai_row, ai_col)
 
         # Kiểm tra sau lượt máy
         result = get_game_result(board)
