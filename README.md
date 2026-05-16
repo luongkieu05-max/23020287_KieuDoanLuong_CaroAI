@@ -12,7 +12,7 @@ Caro AI using Minimax and Alpha-Beta Pruning
 
 | File/Thư mục | Chức năng |
 |---|---|
-| `source_code/main.py` | File chạy chính: chọn Minimax/Alpha-Beta rồi mở pygame |
+| `source_code/main.py` | File chạy chính, mở pygame |
 | `source_code/board.py` | Biểu diễn bàn cờ, tạo bàn cờ, in bàn cờ, kiểm tra ô hợp lệ |
 | `source_code/game_rules.py` | Quy tắc trò chơi, kiểm tra thắng/thua/hòa |
 | `source_code/evaluation.py` | Hàm đánh giá trạng thái bàn cờ |
@@ -47,7 +47,7 @@ Cài thư viện (nếu dùng pygame):
 pip install -r requirements.txt
 ```
 
-Chạy chương trình (menu console: `1` Minimax, `2` Alpha-Beta, `0` thoát; sau mỗi ván có thể chọn lại):
+Chạy chương trình (chọn Minimax / Alpha-Beta trên cửa sổ pygame):
 
 ```bash
 python source_code/main.py
