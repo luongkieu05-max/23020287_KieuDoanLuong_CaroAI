@@ -5,8 +5,7 @@
 # - Dùng chung cho Minimax và Alpha-Beta
 # ===============================
 
-from board import BOARD_SIZE, PLAYER, AI
-from game_rules import check_winner
+from board import size, player, Ai, check_winner
 
 
 def count_row(board, symbol, length):
@@ -15,8 +14,8 @@ def count_row(board, symbol, length):
     """
     count = 0
 
-    for row in range(BOARD_SIZE):
-        for col in range(BOARD_SIZE - length + 1):
+    for row in range(size):
+        for col in range(size - length + 1):
             ok = True
 
             for k in range(length):
@@ -37,16 +36,16 @@ def evaluate(board):
     AI là O nên điểm dương có lợi cho AI.
     Người chơi là X nên điểm âm có lợi cho người chơi.
     """
-    if check_winner(board, AI):
+    if check_winner(board, Ai):
         return 1000
 
-    if check_winner(board, PLAYER):
+    if check_winner(board, player):
         return -1000
 
     score = 0
-    score += count_row(board, AI, 2) * 10
-    score += count_row(board, AI, 3) * 100
-    score -= count_row(board, PLAYER, 2) * 10
-    score -= count_row(board, PLAYER, 3) * 100
+    score += count_row(board, Ai, 2) * 10
+    score += count_row(board, Ai, 3) * 100
+    score -= count_row(board, player, 2) * 10
+    score -= count_row(board, player, 3) * 100
 
     return score

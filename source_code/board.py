@@ -2,128 +2,133 @@
 # File: board.py
 # Chức năng:
 # - Biểu diễn bàn cờ Caro
-# - Tạo bàn cờ
-# - In bàn cờ ra console
-# - Kiểm tra nước đi hợp lệ
-# - Đánh quân lên bàn cờ
-# - Kiểm tra bàn cờ đầy
+# - Tạo bàn cờ, in bàn cờ
+# - Kiểm tra nước đi, thắng, hòa
 # ===============================
 
-# Kích thước bàn cờ theo yêu cầu đề bài: tối thiểu 9x9
-BOARD_SIZE = 9
-
-# Ký hiệu các ô trên bàn cờ
-EMPTY = "."      # Ô trống
-PLAYER = "X"    # Người chơi
-AI = "O"        # Máy tính
+size = 9
+empty = "."
+player = "X"
+Ai = "O"
 
 
 def create_board():
-    """
-    Tạo bàn cờ rỗng kích thước BOARD_SIZE x BOARD_SIZE.
-
-    Bàn cờ được biểu diễn bằng danh sách 2 chiều.
-    Mỗi phần tử trong danh sách là một ô cờ.
-
-    Ví dụ:
-    [
-        ['.', '.', '.', ...],
-        ['.', '.', '.', ...],
-        ...
-    ]
-    """
+    """Tạo bàn cờ rỗng."""
     board = []
 
-    for row in range(BOARD_SIZE):
-        current_row = []
+    for i in range(size):
+        row = []
 
-        for col in range(BOARD_SIZE):
-            current_row.append(EMPTY)
+        for j in range(size):
+            row.append(empty)
 
-        board.append(current_row)
+        board.append(row)
 
     return board
 
 
 def print_board(board):
-    """
-    In bàn cờ ra màn hình console.
-
-    Hàm này hiển thị thêm chỉ số hàng và cột
-    để người chơi dễ nhập vị trí muốn đánh.
-    """
+    """In bàn cờ ra console."""
     print()
 
-    # In chỉ số cột
-    print("   ", end="")
-    for col in range(BOARD_SIZE):
-        print(col, end=" ")
-    print()
-
-    # In từng hàng của bàn cờ
-    for row in range(BOARD_SIZE):
-        print(row, " ", end="")
-
-        for col in range(BOARD_SIZE):
-            print(board[row][col], end=" ")
+    for i in range(size):
+        for j in range(size):
+            print(board[i][j], end=" ")
 
         print()
 
     print()
 
 
-def is_valid_move(board, row, col):
-    """
-    Kiểm tra nước đi có hợp lệ hay không.
+def player_move(board):
+    """Nhận nước đi từ người chơi (console)."""
+    while True:
+        row = int(input("Nhap hang: "))
+        col = int(input("Nhap cot: "))
 
-    Một nước đi hợp lệ khi:
-    - Chỉ số hàng nằm trong bàn cờ
-    - Chỉ số cột nằm trong bàn cờ
-    - Ô được chọn đang trống
-    """
-    if row < 0 or row >= BOARD_SIZE:
+        if valid_move(board, row, col):
+            board[row][col] = player
+            break
+
+        print("Nuoc di khong hop le")
+
+
+def valid_move(board, row, col):
+    """Kiểm tra nước đi có hợp lệ hay không."""
+    if row < 0 or row >= size:
         return False
 
-    if col < 0 or col >= BOARD_SIZE:
+    if col < 0 or col >= size:
         return False
 
-    if board[row][col] != EMPTY:
+    if board[row][col] != empty:
         return False
 
     return True
 
 
 def make_move(board, row, col, symbol):
-    """
-    Đánh quân vào bàn cờ.
-
-    Tham số:
-    - board: bàn cờ hiện tại
-    - row: hàng muốn đánh
-    - col: cột muốn đánh
-    - symbol: quân cờ, có thể là X hoặc O
-
-    Trả về:
-    - True nếu đánh thành công
-    - False nếu nước đi không hợp lệ
-    """
-    if is_valid_move(board, row, col):
+    """Đánh quân lên bàn cờ (dùng cho pygame và AI)."""
+    if valid_move(board, row, col):
         board[row][col] = symbol
         return True
 
     return False
 
 
-def is_board_full(board):
-    """
-    Kiểm tra bàn cờ đã đầy hay chưa.
+def check_winner(board, symbol):
+    """Kiểm tra symbol đã thắng (4 quân liên tiếp) hay chưa."""
+    # Ngang
+    for i in range(size):
+        for j in range(size - 3):
+            if (
+                board[i][j] == symbol
+                and board[i][j + 1] == symbol
+                and board[i][j + 2] == symbol
+                and board[i][j + 3] == symbol
+            ):
+                return True
 
-    Nếu không còn ô trống EMPTY thì bàn cờ đầy.
-    Khi bàn cờ đầy mà không có người thắng thì kết quả là hòa.
-    """
-    for row in range(BOARD_SIZE):
-        for col in range(BOARD_SIZE):
-            if board[row][col] == EMPTY:
-                return False
+    # Dọc
+    for i in range(size - 3):
+        for j in range(size):
+            if (
+                board[i][j] == symbol
+                and board[i + 1][j] == symbol
+                and board[i + 2][j] == symbol
+                and board[i + 3][j] == symbol
+            ):
+                return True
+
+    # Chéo chính
+    for i in range(size - 3):
+        for j in range(size - 3):
+            if (
+                board[i][j] == symbol
+                and board[i + 1][j + 1] == symbol
+                and board[i + 2][j + 2] == symbol
+                and board[i + 3][j + 3] == symbol
+            ):
+                return True
+
+    # Chéo phụ
+    for i in range(3, size):
+        for j in range(size - 3):
+            if (
+                board[i][j] == symbol
+                and board[i - 1][j + 1] == symbol
+                and board[i - 2][j + 2] == symbol
+                and board[i - 3][j + 3] == symbol
+            ):
+                return True
+
+    return False
+
+
+def is_draw(board):
+    """Kiểm tra hòa (bàn cờ đã đầy)."""
+    for row in board:
+        if empty in row:
+            return False
 
     return True

@@ -8,7 +8,7 @@
 
 import pygame
 
-from board import create_board, make_move, is_valid_move, PLAYER, AI, BOARD_SIZE
+from board import create_board, make_move, valid_move, player, Ai, size
 from game_rules import get_game_result
 from ai_minimax import best_move
 from alpha_beta import best_move_alpha_beta
@@ -18,7 +18,7 @@ from alpha_beta import best_move_alpha_beta
 CELL_SIZE = 60
 
 # Kích thước vùng bàn cờ
-BOARD_PIXEL_SIZE = BOARD_SIZE * CELL_SIZE
+BOARD_PIXEL_SIZE = size * CELL_SIZE
 
 # Kích thước cửa sổ
 WINDOW_WIDTH = BOARD_PIXEL_SIZE
@@ -53,7 +53,7 @@ def draw_board(screen, board, font):
     screen.fill(WHITE)
 
     # Vẽ các đường kẻ bàn cờ
-    for i in range(BOARD_SIZE + 1):
+    for i in range(size + 1):
         # Đường ngang
         pygame.draw.line(
             screen,
@@ -73,19 +73,19 @@ def draw_board(screen, board, font):
         )
 
     # Vẽ quân X và O
-    for row in range(BOARD_SIZE):
-        for col in range(BOARD_SIZE):
+    for row in range(size):
+        for col in range(size):
             symbol = board[row][col]
 
             center_x = col * CELL_SIZE + CELL_SIZE // 2
             center_y = row * CELL_SIZE + CELL_SIZE // 2
 
-            if symbol == PLAYER:
+            if symbol == player:
                 text = font.render("X", True, BLUE)
                 text_rect = text.get_rect(center=(center_x, center_y))
                 screen.blit(text, text_rect)
 
-            elif symbol == AI:
+            elif symbol == Ai:
                 text = font.render("O", True, RED)
                 text_rect = text.get_rect(center=(center_x, center_y))
                 screen.blit(text, text_rect)
@@ -164,8 +164,8 @@ def main(ai_mode="ALPHA_BETA"):
                     col = mouse_x // CELL_SIZE
                     row = mouse_y // CELL_SIZE
 
-                    if is_valid_move(board, row, col):
-                        make_move(board, row, col, PLAYER)
+                    if valid_move(board, row, col):
+                        make_move(board, row, col, player)
 
                         result = get_game_result(board)
                         if result != "CONTINUE":
@@ -177,7 +177,7 @@ def main(ai_mode="ALPHA_BETA"):
                         ai_row, ai_col = get_ai_move(board, ai_mode)
 
                         if ai_row is not None and ai_col is not None:
-                            make_move(board, ai_row, ai_col, AI)
+                            make_move(board, ai_row, ai_col, Ai)
 
                         result = get_game_result(board)
                         if result != "CONTINUE":

@@ -8,8 +8,7 @@
 import math
 import time
 
-from board import BOARD_SIZE, EMPTY, PLAYER, AI, is_board_full
-from game_rules import check_winner
+from board import size, empty, player, Ai, is_draw, check_winner
 from evaluation import evaluate
 
 
@@ -17,13 +16,13 @@ def minimax(board, depth, maximizing):
     """
     Thuật toán Minimax.
     """
-    if check_winner(board, AI):
+    if check_winner(board, Ai):
         return 1000
 
-    if check_winner(board, PLAYER):
+    if check_winner(board, player):
         return -1000
 
-    if is_board_full(board):
+    if is_draw(board):
         return 0
 
     if depth == 0:
@@ -32,24 +31,24 @@ def minimax(board, depth, maximizing):
     if maximizing:
         best = -math.inf
 
-        for row in range(BOARD_SIZE):
-            for col in range(BOARD_SIZE):
-                if board[row][col] == EMPTY:
-                    board[row][col] = AI
+        for row in range(size):
+            for col in range(size):
+                if board[row][col] == empty:
+                    board[row][col] = Ai
                     score = minimax(board, depth - 1, False)
-                    board[row][col] = EMPTY
+                    board[row][col] = empty
                     best = max(best, score)
 
         return best
 
     best = math.inf
 
-    for row in range(BOARD_SIZE):
-        for col in range(BOARD_SIZE):
-            if board[row][col] == EMPTY:
-                board[row][col] = PLAYER
+    for row in range(size):
+        for col in range(size):
+            if board[row][col] == empty:
+                board[row][col] = player
                 score = minimax(board, depth - 1, True)
-                board[row][col] = EMPTY
+                board[row][col] = empty
                 best = min(best, score)
 
     return best
@@ -64,12 +63,12 @@ def best_move(board, depth=2):
 
     start = time.time()
 
-    for row in range(BOARD_SIZE):
-        for col in range(BOARD_SIZE):
-            if board[row][col] == EMPTY:
-                board[row][col] = AI
+    for row in range(size):
+        for col in range(size):
+            if board[row][col] == empty:
+                board[row][col] = Ai
                 score = minimax(board, depth - 1, False)
-                board[row][col] = EMPTY
+                board[row][col] = empty
 
                 if score > best_score:
                     best_score = score
