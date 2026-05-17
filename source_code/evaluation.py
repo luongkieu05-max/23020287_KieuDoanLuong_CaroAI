@@ -5,47 +5,59 @@
 # - Dùng chung cho Minimax và Alpha-Beta
 # ===============================
 
-from board import size, player, Ai, check_winner
-
-
-def count_row(board, symbol, length):
-    """
-    Đếm số chuỗi liên tiếp theo hàng ngang có độ dài length.
-    """
-    count = 0
-
-    for row in range(size):
-        for col in range(size - length + 1):
-            ok = True
-
-            for k in range(length):
-                if board[row][col + k] != symbol:
-                    ok = False
-                    break
-
-            if ok:
-                count += 1
-
-    return count
-
-
-def evaluate(board):
-    """
-    Hàm đánh giá trạng thái bàn cờ.
-
-    AI là O nên điểm dương có lợi cho AI.
-    Người chơi là X nên điểm âm có lợi cho người chơi.
-    """
-    if check_winner(board, Ai):
-        return 1000
-
-    if check_winner(board, player):
-        return -1000
-
+from board import BOARD_SIZE, WIN_LEN, lui_o
+# Hàm đánh giá
+def tinh_diem(window, AI, player):
     score = 0
-    score += count_row(board, Ai, 2) * 10
-    score += count_row(board, Ai, 3) * 100
-    score -= count_row(board, player, 2) * 10
-    score -= count_row(board, player, 3) * 100
+    AI_count = window.count(AI) # trả về số lượng lượt đánh của AI trong window
+    Play_count = window.count(player) # trả về số lượng lượt đánh của Người trong window
 
+    # Đánh giá lợi thế của AI
+    if AI_count > 0 and Play_count == 0:
+        if AI_count == 4: score += 100000    # Chắc chắn thắng
+        elif AI_count == 3: score += 10000   # Cơ hội rất cao
+        elif AI_count == 2: score += 100     # Bắt đầu tạo thế
+        elif AI_count == 1: score += 10
+    
+    # Đánh giá nước đi của Player
+    elif Play_count > 0 and AI_count == 0:
+        if Play_count == 4: score -= 100000    # Chắc chắn thua
+        elif Play_count == 3: score -= 10000   # Rất nguy hiểm, phải chặn
+        elif Play_count == 2: score -= 100     # Người chơi đang tạo thế
+        elif Play_count == 1: score -= 10
+        
+    return score
+
+def chuoi4o(board):
+    score = 0
+    # Lập tổ hợp 4 ô liên tiếp khắp bàn cơ
+    for i in range(BOARD_SIZE):
+        for j in range(BOARD_SIZE):
+            # Ngang
+            if j < BOARD_SIZE - lui_o:
+                window = []
+                for e in range(WIN_LEN):
+                    window.append(board[i][j+e])
+                score += tinh_diem(window, 'X', 'O')
+
+            # Dọc
+            if i < BOARD_SIZE - lui_o:
+                window = []
+                for e in range(WIN_LEN):
+                    window.append(board[i+e][j])
+                score += tinh_diem(window, 'X', 'O')
+
+            # Chéo xuống (\)
+            if i < BOARD_SIZE - lui_o and j < BOARD_SIZE - lui_o:
+                window = []
+                for e in range(WIN_LEN):
+                    window.append(board[i+e][j+e])
+                score += tinh_diem(window, 'X', 'O')
+
+            # Chéo lên (/)
+            if i < BOARD_SIZE - lui_o and j >= lui_o:
+                window = []
+                for e in range(WIN_LEN):
+                    window.append(board[i+e][j-e])
+                score += tinh_diem(window, 'X', 'O')
     return score

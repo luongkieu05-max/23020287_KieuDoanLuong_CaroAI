@@ -1,104 +1,66 @@
-# ===============================
-# File: alpha_beta.py
-# Chức năng:
-# - Cài đặt thuật toán Alpha-Beta Pruning
-# - Dùng cùng hàm đánh giá với Minimax
-# - Chọn nước đi tốt nhất cho AI
-# ===============================
-
-import math
-import time
-
-from board import size, empty, player, Ai, is_draw, check_winner
-from evaluation import evaluate
-
-
-def alpha_beta(board, depth, maximizing, alpha, beta):
-    """
-    Thuật toán Alpha-Beta Pruning.
-    """
-    if check_winner(board, Ai):
-        return 1000
-
-    if check_winner(board, player):
-        return -1000
-
-    if is_draw(board):
-        return 0
-
-    if depth == 0:
-        return evaluate(board)
-
-    if maximizing:
-        best = -math.inf
-
-        for row in range(size):
-            for col in range(size):
-                if board[row][col] == empty:
-                    board[row][col] = Ai
-
-                    score = alpha_beta(board, depth - 1, False, alpha, beta)
-
-                    board[row][col] = empty
-
-                    best = max(best, score)
-                    alpha = max(alpha, best)
-
-                    if beta <= alpha:
-                        return best
-
-        return best
-
-    best = math.inf
-
-    for row in range(size):
-        for col in range(size):
-            if board[row][col] == empty:
-                board[row][col] = player
-
-                score = alpha_beta(board, depth - 1, True, alpha, beta)
-
-                board[row][col] = empty
-
-                best = min(best, score)
-                beta = min(beta, best)
-
-                if beta <= alpha:
-                    return best
-
-    return best
-
-
-def best_move_alpha_beta(board, depth=3):
-    """
-    Chọn nước đi tốt nhất cho AI bằng Alpha-Beta Pruning.
-    """
-    best_score = -math.inf
-    move = None
-
-    start = time.time()
-
-    for row in range(size):
-        for col in range(size):
-            if board[row][col] == empty:
-                board[row][col] = Ai
-
-                score = alpha_beta(
-                    board,
-                    depth - 1,
-                    False,
-                    -math.inf,
-                    math.inf
-                )
-
-                board[row][col] = empty
-
-                if score > best_score:
-                    best_score = score
-                    move = (row, col)
-
-    end = time.time()
-    print("Thoi gian Alpha-Beta:", end - start)
-    print("Nuoc di tot nhat:", move, "diem:", best_score)
-
-    return move
+# ===============================
+# File: alpha_beta.py
+# Chức năng:
+# - Cài đặt thuật toán Alpha-Beta Pruning
+# - Dùng cùng hàm đánh giá với Minimax
+# - Chọn nước đi tốt nhất cho AI
+# ===============================
+
+
+
+import math
+
+from board import DEPTH, check_winner, o_trong, draw
+from evaluation import chuoi4o
+
+def minimax(board, depth, alpha, beta, is_maximizing):
+    if check_winner(board, 'X'): return 10000000
+    if check_winner(board, 'O'): return -10000000
+    if draw(board): return 0
+    
+    # Khi đạt tới độ sâu giới hạn, dùng hàm đánh giá để chấm điểm
+    if depth == 0: return chuoi4o(board)
+
+    danh_sach_o_trong = o_trong(board)
+
+    if is_maximizing:
+        max_eval = -math.inf
+        for move in danh_sach_o_trong:
+            board[move[0]][move[1]] = 'X'
+            eval = minimax(board, depth - 1, alpha, beta, False)
+            board[move[0]][move[1]] = ' '
+            max_eval = max(max_eval, eval)
+            alpha = max(alpha, eval)
+            if beta <= alpha:
+                break
+        return max_eval
+    else:
+        min_eval = math.inf
+        for move in danh_sach_o_trong:
+            board[move[0]][move[1]] = 'O'
+            eval = minimax(board, depth - 1, alpha, beta, True)
+            board[move[0]][move[1]] = ' '
+            min_eval = min(min_eval, eval)
+            beta = min(beta, eval)
+            if beta <= alpha: 
+                break
+        return min_eval
+
+def get_best_move(board):
+    best_score = -math.inf
+    best_move = None
+    possible_moves = o_trong(board)
+    alpha = -math.inf
+    beta = math.inf
+
+    for move in possible_moves:
+        board[move[0]][move[1]] = 'X'
+        score = minimax(board, DEPTH - 1, alpha, beta, False)
+        board[move[0]][move[1]] = ' '
+        
+        if score > best_score:
+            best_score = score
+            best_move = move
+        alpha = max(alpha, best_score)
+        
+    return best_move
