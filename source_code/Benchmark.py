@@ -9,7 +9,9 @@ import copy
 # Import các hàm từ các file hiện tại của bạn
 import board as board_module
 from board import BOARD_SIZE, check_winner, draw
+import ai_minimax
 from ai_minimax import get_best_move1  # Hàm Minimax thuần túy
+import alpha_beta
 from alpha_beta import get_best_move    # Hàm Alpha-Beta Pruning
 
 # CẤU HÌNH ĐỒ HỌA INTERFACE
@@ -56,10 +58,10 @@ b4[4][3] = 'O'; b4[4][2] = 'O'; b4[4][6] = 'O'
 b4[5][2] = 'X'; b4[4][1] = 'X'; b4[4][7] = 'X'
 
 # Trạng thái 5: Tàn cuộc đỉnh điểm gay cấn nhưng CHƯA thắng (26 nước)
-# Kế thừa Trạng thái 4 và thêm 6 nước đi cuối cùng cực kỳ căng thẳng
+# Kế thừa Trạng thái 4 và tiếp tục cuộc đấu cực kỳ khốc liệt ở trung tâm
 b5 = copy.deepcopy(b4)
-b5[5][6] = 'O'; b5[1][7] = 'O'; b5[5][1] = 'O'
-b5[6][6] = 'X'; b5[0][7] = 'X'; b5[6][1] = 'X'
+b5[1][1] = 'O'; b5[5][0] = 'O'
+b5[5][3] = 'X'; b5[1][5] = 'X'; b5[2][6] = 'X'; b5[0][3] = 'X'; b5[6][0] = 'X'
 
 BENCHMARK_BOARDS = [b1, b2, b3, b4, b5]
 
@@ -82,7 +84,10 @@ class BenchmarkUI:
         
         # Dữ liệu bảng kết quả
         self.results = {
-            i: {"mm_time": "Not Tested", "mm_move": "N/A", "ab_time": "Not Tested", "ab_move": "N/A"}
+            i: {
+                "mm_time": "Not Tested", "mm_move": "N/A", "mm_states": "N/A",
+                "ab_time": "Not Tested", "ab_move": "N/A", "ab_states": "N/A"
+            }
             for i in range(5)
         }
         
@@ -152,9 +157,9 @@ class BenchmarkUI:
         pygame.draw.rect(self.screen, (255, 255, 255), (GRID_SIZE + 40, table_start_y, 620, 380), border_radius=10)
         
         # Tiêu đề cột
-        headers = ["Sample", "MiniMax Move", "Minimax Time", "AlphaBeta Move", "AlphaBeta Time"]
-        col_widths = [100, 120, 130, 120, 130]
-        start_x = GRID_SIZE + 50
+        headers = ["Sample", "MM Move", "MM Time", "MM States", "AB Move", "AB Time", "AB States"]
+        col_widths = [65, 80, 85, 95, 80, 85, 95]
+        start_x = GRID_SIZE + 45
         
         # Vẽ Header nền màu xanh đậm
         pygame.draw.rect(self.screen, ACCENT_COLOR, (GRID_SIZE + 40, table_start_y, 620, 40), border_top_left_radius=10, border_top_right_radius=10)
@@ -178,14 +183,16 @@ class BenchmarkUI:
                 f"Board {i+1}",
                 str(res["mm_move"]),
                 f"{res['mm_time']:.4f}s" if isinstance(res['mm_time'], float) else res['mm_time'],
+                str(res["mm_states"]),
                 str(res["ab_move"]),
-                f"{res['ab_time']:.4f}s" if isinstance(res['ab_time'], float) else res['ab_time']
+                f"{res['ab_time']:.4f}s" if isinstance(res['ab_time'], float) else res['ab_time'],
+                str(res["ab_states"])
             ]
             
             for idx, data in enumerate(row_data):
                 d_x = start_x + sum(col_widths[:idx])
-                # Đổi màu chữ thời gian Alpha-Beta sang xanh lá nếu nó nhanh hơn để làm nổi bật kết quả
-                c = (11, 150, 100) if idx == 4 and isinstance(res['ab_time'], float) else TEXT_COLOR
+                # Đổi màu chữ Alpha-Beta sang xanh lá nếu đã tính xong để làm nổi bật kết quả
+                c = (11, 150, 100) if idx in (4, 5, 6) and isinstance(res['ab_time'], float) else TEXT_COLOR
                 txt = self.font_text.render(data, True, c)
                 self.screen.blit(txt, (d_x, row_y + 15))
 
@@ -200,18 +207,22 @@ class BenchmarkUI:
         start_time = time.time()
         mm_move = get_best_move1(copy.deepcopy(board))
         mm_elapsed = time.time() - start_time
+        mm_states = ai_minimax.visited_states
         
         # 2. Đo hiệu năng Alpha-Beta Pruning 
         start_time = time.time()
         ab_move = get_best_move(copy.deepcopy(board))
         ab_elapsed = time.time() - start_time
+        ab_states = alpha_beta.visited_states
         
         # 3. Cập nhật dữ liệu lưu vào bảng
         self.results[self.current_board_idx] = {
             "mm_time": mm_elapsed,
             "mm_move": mm_move if mm_move else "Pass",
+            "mm_states": mm_states,
             "ab_time": ab_elapsed,
-            "ab_move": ab_move if ab_move else "Pass"
+            "ab_move": ab_move if ab_move else "Pass",
+            "ab_states": ab_states
         }
 
     def main_loop(self):

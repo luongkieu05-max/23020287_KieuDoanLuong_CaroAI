@@ -6,12 +6,16 @@
 # ===============================
 
 import math
-
 import board as board_module
 from board import check_winner, o_trong, draw
 from evaluation import chuoi4o
 
+visited_states = 0
+
 def minimax(board, depth, is_maximizing):
+    global visited_states
+    visited_states += 1
+
     if check_winner(board, 'O'): return 10000000
     if check_winner(board, 'X'): return -10000000
     if draw(board): return 0
@@ -39,6 +43,9 @@ def minimax(board, depth, is_maximizing):
         return min_eval
 
 def get_best_move1(board):
+    global visited_states
+    visited_states = 0
+
     best_score = -math.inf
     best_move = None
     possible_moves = o_trong(board)
