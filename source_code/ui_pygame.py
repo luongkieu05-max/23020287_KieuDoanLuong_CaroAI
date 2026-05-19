@@ -287,10 +287,13 @@ class CaroPygame:
             depth4()  # Gọi hàm đổi DEPTH = 4 trong board.py
 
         # 2. GỌI THUẬT TOÁN AI (AI sẽ tự động đọc giá trị DEPTH mới từ board.py)
+        import time
+        start_time = time.time()
         if self.mode == "alpha":
             move = get_best_move(board_copy)
         else:
             move = get_best_move1(board_copy)
+        elapsed_time = time.time() - start_time
 
         # 3. Cập nhật nước đi lên bàn cờ chính và kiểm tra kết quả ván đấu
         if move and not self.game_over:
@@ -304,7 +307,7 @@ class CaroPygame:
                 self.game_over = True
                 self.status_text = "DRAW"
             else:
-                self.status_text = f"You(X)"
+                self.status_text = f"You(X) | AI: {elapsed_time:.3f}s"
         
         self.ai_thinking = False
 
