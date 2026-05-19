@@ -80,7 +80,3 @@ python source_code/Benchmark.py
 | `requirements.txt` | Phụ thuộc Python (pygame). |
 
 
-<<<<<<< HEAD
-- Nếu đề bài yêu cầu `report.pdf`, thêm file vào thư mục gốc và cập nhật danh sách nộp tương ứng.
-=======
->>>>>>> 3e6e68cd1cc5d8dac9abd32bd8fa473596c8f222
