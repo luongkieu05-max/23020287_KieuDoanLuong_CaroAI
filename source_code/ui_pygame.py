@@ -346,6 +346,3 @@ class CaroPygame:
 def main():
     game = CaroPygame()
     game.game_loop()
-
-if __name__ == '__main__':
-    main()
