@@ -13,31 +13,36 @@ WIN_LEN = 4  # Điều kiện thắng
 DEPTH = 4    # Độ sâu
 lui_o = WIN_LEN - 1
 
+def depth2():
+    global DEPTH
+    DEPTH = 2
+    return DEPTH
+
+def depth3():
+    global DEPTH
+    DEPTH = 3
+    return DEPTH
+
+def depth4():
+    global DEPTH
+    DEPTH = 4
+    return DEPTH
 # Kiểm tra chiến thắng
 def check_winner(board, player):
     for i in range(BOARD_SIZE):
         for j in range(BOARD_SIZE):
-            a = b = c = d = 0
-            for e in range(WIN_LEN):
             # Ngang
-                if j < BOARD_SIZE - lui_o:
-                    if board[i][j+e] == player:
-                        a += 1
+            if j <= BOARD_SIZE - WIN_LEN and all(board[i][j + k] == player for k in range(WIN_LEN)):
+                return True
             # Dọc
-                if i < BOARD_SIZE - lui_o:
-                    if board[i+e][j] == player:
-                        b += 1
+            if i <= BOARD_SIZE - WIN_LEN and all(board[i + k][j] == player for k in range(WIN_LEN)):
+                return True
             # Chéo xuống (\)
-                if i < BOARD_SIZE - lui_o and j < BOARD_SIZE - lui_o:
-                    if board[i+e][j+e] == player:
-                        c += 1
+            if i <= BOARD_SIZE - WIN_LEN and j <= BOARD_SIZE - WIN_LEN and all(board[i + k][j + k] == player for k in range(WIN_LEN)):
+                return True
             # Chéo lên (/)
-                if i < BOARD_SIZE - lui_o and j >= lui_o:
-                    if board[i+e][j-e] == player:
-                        d += 1
-            if a==4 or b==4 or c==4 or d==4:
-                    return True
-            
+            if i >= WIN_LEN - 1 and j <= BOARD_SIZE - WIN_LEN and all(board[i - k][j + k] == player for k in range(WIN_LEN)):
+                return True
     return False
 
 # Kiểm tra hòa

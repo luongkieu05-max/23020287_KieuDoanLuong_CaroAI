@@ -7,12 +7,13 @@
 
 import math
 
-from board import DEPTH, check_winner, o_trong, draw
+import board as board_module
+from board import check_winner, o_trong, draw
 from evaluation import chuoi4o
 
 def minimax(board, depth, is_maximizing):
-    if check_winner(board, 'X'): return 10000000
-    if check_winner(board, 'O'): return -10000000
+    if check_winner(board, 'O'): return 10000000
+    if check_winner(board, 'X'): return -10000000
     if draw(board): return 0
     
     # Khi đạt tới độ sâu giới hạn, dùng hàm đánh giá để chấm điểm
@@ -23,7 +24,7 @@ def minimax(board, depth, is_maximizing):
     if is_maximizing:
         max_eval = -math.inf
         for move in danh_sach_o_trong:
-            board[move[0]][move[1]] = 'X'
+            board[move[0]][move[1]] = 'O'
             eval = minimax(board, depth - 1, False)
             board[move[0]][move[1]] = ' '
             max_eval = max(max_eval, eval)
@@ -31,7 +32,7 @@ def minimax(board, depth, is_maximizing):
     else:
         min_eval = math.inf
         for move in danh_sach_o_trong:
-            board[move[0]][move[1]] = 'O'
+            board[move[0]][move[1]] = 'X'
             eval = minimax(board, depth - 1, True)
             board[move[0]][move[1]] = ' '
             min_eval = min(min_eval, eval)
@@ -43,8 +44,8 @@ def get_best_move1(board):
     possible_moves = o_trong(board)
 
     for move in possible_moves:
-        board[move[0]][move[1]] = 'X'
-        score = minimax(board, DEPTH - 1, False)
+        board[move[0]][move[1]] = 'O'
+        score = minimax(board, board_module.DEPTH - 1, False)
         board[move[0]][move[1]] = ' '
         
         if score > best_score:
